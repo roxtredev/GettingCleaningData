@@ -1,3 +1,6 @@
+#  Libraries
+library(dplyr)
+
 # 1.  Merges the training and the test sets to create one data set.
 
 #  Reading all files.
@@ -71,8 +74,12 @@ setForMeanStd <- setAllInOne[ , mean_std == TRUE]
 # each activity and each subject.
 
 # Tidy data set
-secTidySet <- aggregate(. ~subjectId + activityId, ActivityNames, mean, na.rm = TRUE)
-secTidySet <- secTidySet[order(secTidySet$subjectId, secTidySet$activityId),]
+library(dplyr)
+FinalData <- ActivityNames %>%
+  group_by(subjectId, activityId) %>%
+  summarise_all(funs(mean))
+
+str(FinalData)
 
 # Writing tidy data set in txt file
-write.table(secTidySet, "secondTS.txt", row.name=FALSE)
+write.table(FinalData, "secondTS.txt", row.name=FALSE)
