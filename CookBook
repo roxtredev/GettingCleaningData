@@ -41,3 +41,43 @@ Data Frames:
 -  Merging data frames
 -  Comparing data frames - Search for duplicate or unique rows across multiple data frames.
 -  Re-computing the levels of all factor columns in a data frame
+
+
+These are the variables, libraries and
+
+LIBRARIES:
+  library(dplyr)
+  library(dplyr)
+
+VARIABLES:
+x_train <- read.table("./UCI HAR Dataset/train/X_train.txt")
+y_train <- read.table("./UCI HAR Dataset/train/y_train.txt")
+subject_train <- read.table("./UCI HAR Dataset/train/subject_train.txt")
+x_test <- read.table("./UCI HAR Dataset/test/X_test.txt")
+y_test <- read.table("./UCI HAR Dataset/test/y_test.txt")
+subject_test <- read.table("./UCI HAR Dataset/test/subject_test.txt")
+features <- read.table('./UCI HAR Dataset/features.txt')
+activityLabels = read.table('./UCI HAR Dataset/activity_labels.txt')
+colnames:  
+  (x_train) <- features[,2]
+  (y_train) <-"activityId"
+  (subject_train) <- "subjectId"
+  (x_test) <- features[,2] 
+  (y_test) <- "activityId"
+  (subject_test) <- "subjectId"
+  (activityLabels) <- c('activityId','activityType')
+mrg_train <- cbind(y_train, subject_train, x_train)
+mrg_test <- cbind(y_test, subject_test, x_test)
+setAllInOne <- rbind(mrg_train, mrg_test)
+mean_std <- (grepl("activityId" , colNames) | 
+               grepl("subjectId" , colNames) | 
+               grepl("mean.." , colNames) | 
+               grepl("std.." , colNames))
+setForMeanStd <- setAllInOne[ , mean_std == TRUE]
+ActivityNames <- merge(setForMeanStd, activityLabels, 
+                       by='activityId',
+                       all.x=TRUE)
+setForMeanStd <- setAllInOne[ , mean_std == TRUE]
+FinalData <- ActivityNames %>%
+  group_by(subjectId, activityId) %>%
+  summarise_all(funs(mean))
